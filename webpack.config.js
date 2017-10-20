@@ -1,18 +1,35 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 
 module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js'
+    filename: '[name].[chunkhash].js'
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.vue'],
+    alias: {
+      vue: 'vue/dist/vue.js'
+    }
   },
   module: {
     loaders: [
+      {test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            scss: 'vue-style-loader!css-loader!sass-loader', // <style lang="scss">
+            sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax', // <style lang="sass">
+          },
+          extractCSS: true,
+          transformToRequire: {
+            image: 'href'
+          }
+        }
+      },
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
@@ -43,23 +60,20 @@ module.exports = {
         loader: 'html-loader'
       },
       {
-        test: /\.(eot|woff|woff2|ttf|svg|jpg|png)$/,
+        test: /\.(eot|woff|woff2|ttf|svg)$/,
         loader: 'url-loader?limit=10000'
+      },
+      {
+        test: /\.(jpe?g|gif|png)$/,
+        loader: 'file-loader',
       }
     ]
   },
   plugins: [
+    new CleanWebpackPlugin('dist'),
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     })
-  ],
-  devServer: {
-    // proxy: {
-    //   '/': {
-    //     target: 'http://localhost:4000',
-    //     secure: false
-    //   },
-    // }
-  }
+  ]
 };
