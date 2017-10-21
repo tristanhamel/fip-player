@@ -1,6 +1,7 @@
 <template>
   <div>
     <button @click="animate">Animate</button>
+    <button @click="toPlayShape">To play shape</button>
     <svg id="viewBox" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
     </svg>
   </div>
@@ -17,7 +18,8 @@
     data: () => ({
       snapInstance: {},
       paths: [],
-      animated: false
+      animated: false,
+      showingPlayButton: false
     }),
     mounted() {
       this.snapInstance = Snap('#viewBox');
@@ -62,25 +64,24 @@
 
 //        debug(this.snapInstance, dAttrs);
 
+      },
+      toPlayShape() {
+        if(!this.showingPlayButton) {
+          const summits = paths.toPlayShape(this.paths);
+          console.log(summits);
+          this.paths
+            .forEach((p, i) => p
+              .snap
+              .animate(summits[i], 500)
+            );
+        } else {
+          this.paths.forEach(path => path.snap.animate({d: path.dString()}, 500));
+        }
+
+        this.showingPlayButton = !this.showingPlayButton;
       }
     }
   });
-
-  function debug(snapInstance, paths) {
-    snapInstance.path('M 0 100 H 200').attr({stroke: 'red', strokeWidth: 1});
-    snapInstance.path('M 100 0 V 200').attr({stroke: 'red', strokeWidth: 1});
-
-    paths
-      .forEach(anchors => {
-        anchors
-          .forEach(a => {
-//            snapInstance.circle(a[0], a[1], 0.5)
-//              .attr({fill: 'lightGreen'});
-            snapInstance.circle(a[2], a[3], 0.5)
-              .attr({fill: 'green'});
-          });
-    });
-  }
 </script>
 
 <style lang="scss"></style>

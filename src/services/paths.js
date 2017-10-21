@@ -1,5 +1,14 @@
 import * as settings from '../settings';
 
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+  const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+
+  return {
+    x: Math.round((centerX + (radius * Math.cos(angleInRadians))) * 10) / 10,
+    y: Math.round((centerY + (radius * Math.sin(angleInRadians))) * 10) / 10
+  };
+}
+
 function getColor(n, max) {
   return `hsl(0, 0, ${Math.round(100 * (settings.pathsCount - Math.abs(n)) / max)}%)`;
 }
@@ -97,4 +106,42 @@ export function mapMove(paths, offsets) {
       sp[2],
       sp[3] + off(path.n, offsets[i], offsets[i], path.y)
     ]));
+}
+
+export function toPlayShape(paths) {
+  const center = {x: settings.viewBox.w / 2, y: settings.viewBox.h / 2};
+  const r = settings.viewBox.w / 3;
+
+  function getTriangles(n) {
+    const summits = [{x: center.x + r + n, y: center.y}];
+    summits.push(
+      Object.assign(polarToCartesian(center.x, center.y, r + n, -30)),
+      Object.assign(polarToCartesian(center.x, center.y, r + n, -150))
+    );
+
+    return {d: `
+      M ${summits[0].x} ${summits[0].y}
+      L ${summits[1].x} ${summits[1].y}
+      L ${summits[2].x} ${summits[2].y}
+      Z`};
+  }
+
+  // function getCircle(n) {
+  //   const r1 = n + settings.viewBox.w / 3;
+  //   return {d: `
+  //     M ${center.x} ${center.y}
+  //     m -${r1} 0
+  //     a ${r1},${r1} 0 1,0 ${2*r1},${center.y}
+  //     a ${r1},${r1} 0 1,0 -${2*r1},${center.y}`};
+  // }
+
+  function getShape(paths) {
+    const threshold = settings.pathsCount / 2;
+    return paths
+      // .map( p => p.n > threshold ? getCircle(p.n) : getTriangles(p.n));
+      .map( p => p.n > threshold ? getTriangles(p.n) : getTriangles(p.n));
+  }
+
+  return getShape(paths);
+
 }
