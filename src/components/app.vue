@@ -33,11 +33,23 @@
           });
 
       });
+
+      // group our paths
+      const pathsGroup = this.snapInstance.group(...this.paths.map(p => p.snap));
+      const gradient = this.snapInstance.gradient('l(0, 0, 0, 1)red-red-orange-green-blue-indigo-violet');
+
+      // create a gradient
+      this.snapInstance.rect(0,0,200,200).attr({
+        fill: gradient,
+        mask: pathsGroup
+      });
     },
     methods: {
       animate() {
         if(!this.animated) {
-          const offsets = [0, 10, -30, 25, -15, 5, -25, 20, -10, 0];
+          const seed1 = [-10, -30, -25, -15, -5, -25, 0, -10];
+          const seed2 = [-10, 30, -25, 15, -5, 25, -3, 10];
+          const offsets = [0, ...seed2, ...seed2, ...seed2, ...seed2, 0];
           const dAttrs = paths.mapMove(this.paths, offsets);
           this.paths
             .forEach((path, i) => {

@@ -1,9 +1,7 @@
 import * as settings from '../settings';
 
 function getColor(n, max) {
-  if(!n) return 'blue';
-  return `hsl(0, 0, ${Math.round(100 * Math.abs(n) / max)}%)`;
-  // return 'black';
+  return `hsl(0, 0, ${Math.round(100 * (settings.pathsCount - Math.abs(n)) / max)}%)`;
 }
 
 function describePath(y, n) {
