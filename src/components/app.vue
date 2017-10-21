@@ -2,6 +2,7 @@
   <div>
     <button @click="animate">Animate</button>
     <button @click="toPlayShape">To play shape</button>
+    <button @click="toLoadShape">To load shape</button>
     <svg id="viewBox" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
     </svg>
   </div>
@@ -13,13 +14,15 @@
   import Snap from 'snapsvg-cjs';
 
   import * as paths from '../services/paths';
+  import * as settings from '../settings';
 
   export default Vue.component('app', {
     data: () => ({
       snapInstance: {},
       paths: [],
       animated: false,
-      showingPlayButton: false
+      showingPlayButton: false,
+      showingLoader: false
     }),
     mounted() {
       this.snapInstance = Snap('#viewBox');
@@ -61,14 +64,10 @@
           this.paths.forEach(path => path.snap.animate({d: path.dString()}, 500));
         }
         this.animated = !this.animated;
-
-//        debug(this.snapInstance, dAttrs);
-
       },
       toPlayShape() {
         if(!this.showingPlayButton) {
           const summits = paths.toPlayShape(this.paths);
-          console.log(summits);
           this.paths
             .forEach((p, i) => p
               .snap
@@ -79,6 +78,36 @@
         }
 
         this.showingPlayButton = !this.showingPlayButton;
+      },
+      toLoadShape() {
+        function animateDash(snap, offset, n) {
+
+          snap.animate(
+            {strokeDashoffset: n ? settings.viewBox.w - offset : offset},
+            1000,
+            mina.easeinout(),
+            () => {this.showingLoader ? animateDash.call(this, snap, offset, !n) : null}
+          );
+        }
+
+        if(!this.showingLoader) {
+          this.paths
+            .forEach(p => {
+              const dashData = paths.getRandomDashArray();
+              p
+                .snap
+                .attr({
+                  strokeDasharray: dashData.dashArray,
+                  strokeDashoffset: dashData.dashOffset
+                });
+
+              animateDash.call(this, p.snap, dashData.dashOffset, true);
+            });
+        } else {
+          this.paths.forEach(path => path.snap.attr({strokeDasharray: ''}));
+        }
+
+        this.showingLoader = !this.showingLoader;
       }
     }
   });

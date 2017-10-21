@@ -145,3 +145,14 @@ export function toPlayShape(paths) {
   return getShape(paths);
 
 }
+
+export function getRandomDashArray() {
+  const length = settings.viewBox.w;
+  const dashLength = 5;
+  const point = Math.round(Math.random() * length);
+
+  return {
+    dashArray : `${length} 5`,
+    dashOffset: `${point}`
+  };
+}
