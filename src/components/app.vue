@@ -20,9 +20,12 @@
     data: () => ({
       snapInstance: {},
       paths: [],
+      pathsGroup: [],
+      menuPaths: [],
       animated: false,
       showingPlayButton: false,
-      showingLoader: false
+      showingLoader: false,
+      openedMenu: false
     }),
     mounted() {
       this.snapInstance = Snap('#viewBox');
@@ -39,15 +42,60 @@
 
       });
 
+      // create menu elements
+      const menuPathsDefs = [
+        `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*2} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*2}`,
+        `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*2.5} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*2.5}`,
+          `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*3} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*3}`
+      ];
+
+      this.menuPaths = menuPathsDefs
+        .map(mp => ({dString:  mp}));
+
+      this.menuPaths
+        .forEach(mp => mp.snap = this.snapInstance
+          .path(mp.dString)
+          .attr({
+            fill: 'transparent',
+            stroke: 'white',
+            strokeWidth: 0.2
+          })
+        );
+
+      this.menuPaths.unshift({
+        snap: this.snapInstance.rect(
+          settings.pathsDistance,
+          settings.pathsDistance,
+          3 * settings.pathsDistance,
+          3 * settings.pathsDistance,
+          1.5 * settings.pathsDistance,
+          1.5 * settings.pathsDistance
+        )
+          .attr({
+            fill: 'transparent',
+            stroke: 'white',
+            strokeWidth: 0.2
+          })
+      });
+
+      const menuPathsGroup = this.snapInstance.group(...this.menuPaths.map(p => p.snap));
+
       // group our paths
-      const pathsGroup = this.snapInstance.group(...this.paths.map(p => p.snap));
+      this.pathsGroup = this.snapInstance.group(...this.paths.map(p => p.snap));
+
       const gradient = this.snapInstance.gradient('l(0, 0, 0, 1)red-red-orange-green-blue-indigo-violet');
 
       // create a gradient
       this.snapInstance.rect(0,0,200,200).attr({
         fill: gradient,
-        mask: pathsGroup
+        mask: this.snapInstance.group(this.pathsGroup, menuPathsGroup)
       });
+
+      const clickGhost = this.snapInstance.rect(settings.pathsDistance*2, settings.pathsDistance, settings.pathsDistance*3, settings.pathsDistance*3)
+        .attr({
+          fill: 'transparent',
+        })
+        .click(this.openMenu);
     },
     methods: {
       animate() {
@@ -85,7 +133,7 @@
           snap.animate(
             {strokeDashoffset: n ? settings.viewBox.w - offset : offset},
             1000,
-            mina.easeinout(),
+            mina.easeinout,
             () => {this.showingLoader ? animateDash.call(this, snap, offset, !n) : null}
           );
         }
@@ -108,6 +156,34 @@
         }
 
         this.showingLoader = !this.showingLoader;
+      },
+      openMenu() {
+        if(!this.openedMenu) {
+            this.pathsGroup.animate({opacity: 0}, 100, null, () => {
+              this.menuPaths[0].snap.animate({
+                width: settings.viewBox.w - settings.pathsDistance * 2,
+                height: settings.viewBox.h - settings.pathsDistance * 2,
+              }, 300);
+            });
+
+          this.menuPaths[1].snap.animate({d: `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*2} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*4}`}, 300);
+          this.menuPaths[2].snap.animate({d: `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*4} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*2}`}, 300);
+          this.menuPaths[3].snap.animate({opacity: 0}, 300);
+
+
+        } else {
+          this.menuPaths[0].snap.animate({
+            width: settings.pathsDistance * 3,
+            height: settings.pathsDistance * 3,
+          }, 300, () => {
+            this.pathsGroup.animate({opacity: 1}, 100);
+          });
+          this.menuPaths[1].snap.animate({d: this.menuPaths[1].dString}, 200);
+          this.menuPaths[2].snap.animate({d: this.menuPaths[2].dString}, 200);
+          this.menuPaths[3].snap.animate({opacity: 1}, 200);
+
+        }
+        this.openedMenu = !this.openedMenu;
       }
     }
   });
