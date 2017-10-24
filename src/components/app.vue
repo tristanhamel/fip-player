@@ -1,7 +1,7 @@
 <template>
   <div>
     <audio></audio>
-    <button @click="animate">Animate</button>
+    <button @click="toggleAnimation">Animate</button>
     <button @click="toPlayShape">To play shape</button>
     <button @click="toLoadShape">To load shape</button>
     <svg id="viewBox" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -15,7 +15,7 @@
   import Snap from 'snapsvg-cjs';
 
   import * as paths from '../services/paths';
-  import getStream from '../services/radio';
+  import * as getStream from '../services/radio';
   import * as settings from '../settings';
 
   export default Vue.component('app', {
@@ -24,6 +24,7 @@
       paths: [],
       pathsGroup: [],
       menuPaths: [],
+      frequencyData: [],
       animated: false,
       showingPlayButton: false,
       showingLoader: false,
@@ -32,7 +33,7 @@
     mounted() {
       // radio stream
       const audioElement = document.querySelector('audio');
-      getStream(audioElement);
+      getStream.init(audioElement);
 
       // svg ui
       this.snapInstance = Snap('#viewBox');
@@ -106,19 +107,25 @@
     },
     methods: {
       animate() {
-        if(!this.animated) {
-          const seed1 = [-10, -30, -25, -15, -5, -25, 0, -10];
-          const seed2 = [-10, 30, -25, 15, -5, 25, -3, 10];
-          const offsets = [0, ...seed2, ...seed2, ...seed2, ...seed2, 0];
-          const dAttrs = paths.mapMove(this.paths, offsets);
+          const dAttrs = paths.mapMove(this.paths, getStream.getData());
           this.paths
             .forEach((path, i) => {
               path.snap.animate({d: path.dString(dAttrs[i])}, 500);
             });
-        } else {
-          this.paths.forEach(path => path.snap.animate({d: path.dString()}, 500));
-        }
+
+        setTimeout(() => this.animate(), 500);
+      },
+      toggleAnimation() {
         this.animated = !this.animated;
+        this.animated ? this.startAnimation() : this.stopAnimation();
+      },
+      startAnimation() {
+        getStream.start();
+        this.animate();
+      },
+      stopAnimation() {
+        getStream.stop();
+        this.paths.forEach(path => path.snap.animate({d: path.dString()}, 500));
       },
       toPlayShape() {
         if(!this.showingPlayButton) {
