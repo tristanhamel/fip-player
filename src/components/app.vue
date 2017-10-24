@@ -1,5 +1,6 @@
 <template>
   <div>
+    <audio></audio>
     <button @click="animate">Animate</button>
     <button @click="toPlayShape">To play shape</button>
     <button @click="toLoadShape">To load shape</button>
@@ -14,6 +15,7 @@
   import Snap from 'snapsvg-cjs';
 
   import * as paths from '../services/paths';
+  import getStream from '../services/radio';
   import * as settings from '../settings';
 
   export default Vue.component('app', {
@@ -28,6 +30,11 @@
       openedMenu: false
     }),
     mounted() {
+      // radio stream
+      const audioElement = document.querySelector('audio');
+      getStream(audioElement);
+
+      // svg ui
       this.snapInstance = Snap('#viewBox');
       this.paths = paths.spawnPaths();
 
