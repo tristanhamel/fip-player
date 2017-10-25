@@ -53,7 +53,33 @@ function sAnchor(x, y, padding) {
   return [x - padding, y, x, y];
 }
 
-export function spawnPaths() {
+function toPlayShape(paths) {
+
+  const center = {x: settings.viewBox.w / 2, y: settings.viewBox.h / 2};
+  const r = settings.viewBox.w / 3;
+
+  function getTriangles(n) {
+    const summits = [{x: center.x + r + n, y: center.y}];
+    summits.push(
+      Object.assign(polarToCartesian(center.x, center.y, r + n, -30)),
+      Object.assign(polarToCartesian(center.x, center.y, r + n, -150))
+    );
+
+    return {d: `
+      M ${summits[0].x} ${summits[0].y}
+      L ${summits[1].x} ${summits[1].y}
+      L ${summits[2].x} ${summits[2].y}
+      Z`};
+  }
+
+  paths
+    .forEach(p => p
+      .snap
+      .animate(getTriangles(p.n), 500)
+    );
+}
+
+function spawnPaths(snapInstance) {
   const paths = [];
   let count = settings.pathsCount;
   while(count >= - settings.pathsCount) {
@@ -61,10 +87,23 @@ export function spawnPaths() {
     count--;
   }
 
+  paths.forEach(p => {
+    p.snap = snapInstance
+      .path(p.dString())
+      .attr({
+        fill: 'transparent',
+        stroke: p.stroke,
+        strokeWidth: 0.1
+      });
+  });
+
+  // animate paths to play button for a start
+  setTimeout(() => toPlayShape(paths), 200);
+
   return paths;
 }
 
-export function mapMove(paths, offsets) {
+function mapMove(paths, offsets) {
   // this is the best spreading algorithm I've found
   // equates to LOG^pathsCount(n) rounded to the first decimal
   const log = n => Math.round(10 * Math.log(n + 1) / Math.log(settings.pathsCount)) / 10;
@@ -108,45 +147,7 @@ export function mapMove(paths, offsets) {
     ]));
 }
 
-export function toPlayShape(paths) {
-  const center = {x: settings.viewBox.w / 2, y: settings.viewBox.h / 2};
-  const r = settings.viewBox.w / 3;
-
-  function getTriangles(n) {
-    const summits = [{x: center.x + r + n, y: center.y}];
-    summits.push(
-      Object.assign(polarToCartesian(center.x, center.y, r + n, -30)),
-      Object.assign(polarToCartesian(center.x, center.y, r + n, -150))
-    );
-
-    return {d: `
-      M ${summits[0].x} ${summits[0].y}
-      L ${summits[1].x} ${summits[1].y}
-      L ${summits[2].x} ${summits[2].y}
-      Z`};
-  }
-
-  // function getCircle(n) {
-  //   const r1 = n + settings.viewBox.w / 3;
-  //   return {d: `
-  //     M ${center.x} ${center.y}
-  //     m -${r1} 0
-  //     a ${r1},${r1} 0 1,0 ${2*r1},${center.y}
-  //     a ${r1},${r1} 0 1,0 -${2*r1},${center.y}`};
-  // }
-
-  function getShape(paths) {
-    const threshold = settings.pathsCount / 2;
-    return paths
-      // .map( p => p.n > threshold ? getCircle(p.n) : getTriangles(p.n));
-      .map( p => p.n > threshold ? getTriangles(p.n) : getTriangles(p.n));
-  }
-
-  return getShape(paths);
-
-}
-
-export function getRandomDashArray() {
+function getRandomDashArray() {
   const length = settings.viewBox.w;
   const dashLength = 5;
   const point = Math.round(Math.random() * length);
@@ -154,5 +155,50 @@ export function getRandomDashArray() {
   return {
     dashArray : `${length} 5`,
     dashOffset: `${point}`
+  };
+}
+
+function animate(pathsSet, getData, isPlaying) {
+  if (!isPlaying) return;
+  let done = 0 // move to next anim cycle when all anims are completed
+
+  const dAttrs = mapMove(pathsSet, getData());
+
+  pathsSet
+    .forEach((path, i) => {
+      path.snap.animate(
+        {d: path.dString(dAttrs[i])},
+        20,
+        mina.linear,
+        () => {
+          done++;
+          done === pathsSet.length ? animate(pathsSet, getData, isPlaying) : null;
+        }
+      );
+    });
+}
+
+export default function(snapInstance) {
+  return {
+    playing: false,
+    paths: spawnPaths(snapInstance),
+    show: () => {},
+    hide: () => {},
+    play(getData) {
+      this.playing = true;
+
+      const pathsSet = this.paths;
+
+      this.paths
+        .forEach(path => path.snap.animate({d: path.dString()},
+          500,
+          mina.linear,
+          () => animate(pathsSet, getData, this.playing))
+        );
+    },
+    stop() {
+      this.playing = false;
+      toPlayShape(this.paths);
+    }
   };
 }
