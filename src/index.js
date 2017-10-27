@@ -5,6 +5,8 @@ import menu from './services/menu';
 import * as getStream from './services/radio';
 import * as settings from './settings';
 
+import './styles/global.scss';
+
 class App {
   constructor() {
     // temporary  - to be removed
@@ -20,7 +22,9 @@ class App {
 
     // create mask
     const pathsGroup = this.snapInstance.group(
-      ...this.menu.paths.map(p => p.snap),
+      ...this.menu.paths.burger.map(p => p.snap),
+      this.menu.paths.frame.snap,
+      ...this.menu.paths.options.map(p => p.snap),
       this.paths.group
     );
     mask(this.snapInstance, pathsGroup);
