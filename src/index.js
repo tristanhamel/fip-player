@@ -21,7 +21,7 @@ class App {
     // create mask
     const pathsGroup = this.snapInstance.group(
       ...this.menu.paths.map(p => p.snap),
-      ...this.paths.paths.map(p => p.snap)
+      this.paths.group
     );
     mask(this.snapInstance, pathsGroup);
 
@@ -75,8 +75,18 @@ class App {
     this.paths.stop();
   }
 
+  openMenu() {
+    this.menu.open();
+    this.paths.fadeOut();
+  }
+
+  closeMenu() {
+    this.menu.close();
+    this.paths.fadeIn();
+  }
+
   toggleMenu() {
-    this.menu.opened ? this.menu.close() : this.menu.open();
+    this.menu.opened ? this.closeMenu() : this.openMenu();
   }
 
   toggleRadio() {

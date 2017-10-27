@@ -179,11 +179,9 @@ function animate(pathsSet, getData) {
 }
 
 export default function(snapInstance) {
-  return {
+  const obj = {
     playing: false,
     paths: spawnPaths(snapInstance),
-    show: () => {},
-    hide: () => {},
     animate,
     play(getData) {
       this.playing = true;
@@ -203,4 +201,15 @@ export default function(snapInstance) {
       toPlayShape(this.paths);
     }
   };
+
+  obj.group = snapInstance.group(...obj.paths.map(p => p.snap));
+  obj.fadeIn = () => {
+    obj.group.animate({opacity: 1}, 300);
+  };
+  obj.fadeOut = () => {
+    obj.group.animate({opacity: 0}, 300);
+  };
+
+
+  return obj;
 }
