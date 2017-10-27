@@ -158,8 +158,8 @@ function getRandomDashArray() {
   };
 }
 
-function animate(pathsSet, getData, isPlaying) {
-  if (!isPlaying) return;
+function animate(pathsSet, getData) {
+  if (!this.playing) return;
   let done = 0 // move to next anim cycle when all anims are completed
 
   const dAttrs = mapMove(pathsSet, getData());
@@ -172,7 +172,7 @@ function animate(pathsSet, getData, isPlaying) {
         mina.linear,
         () => {
           done++;
-          done === pathsSet.length ? animate(pathsSet, getData, isPlaying) : null;
+          done === pathsSet.length ? this.animate(pathsSet, getData) : null;
         }
       );
     });
@@ -184,17 +184,19 @@ export default function(snapInstance) {
     paths: spawnPaths(snapInstance),
     show: () => {},
     hide: () => {},
+    animate,
     play(getData) {
       this.playing = true;
 
       const pathsSet = this.paths;
 
       this.paths
-        .forEach(path => path.snap.animate({d: path.dString()},
+        .forEach(path => path.snap.animate(
+          {d: path.dString()},
           500,
           mina.linear,
-          () => animate(pathsSet, getData, this.playing))
-        );
+          () => this.animate(pathsSet, getData)
+        ));
     },
     stop() {
       this.playing = false;

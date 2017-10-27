@@ -6,14 +6,14 @@ export default function(snapInstance) {
     opened: false,
     open() {
       this.opened = true;
-
+      this.paths[0].snap.animate({width: settings.viewBox.w - 2*settings.pathsDistance, height: settings.viewBox.h - 2*settings.pathsDistance}, 300);
       this.paths[1].snap.animate({d: `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*2} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*4}`}, 300);
       this.paths[2].snap.animate({d: `M ${settings.pathsDistance*1.5} ${settings.pathsDistance*4} L ${settings.pathsDistance*3.5} ${settings.pathsDistance*2}`}, 300);
       this.paths[3].snap.animate({opacity: 0}, 300);
     },
     close() {
       this.opened = false;
-
+      this.paths[0].snap.animate({width: 3 * settings.pathsDistance, height: 3 * settings.pathsDistance}, 300);
       this.paths[1].snap.animate({d: this.paths[1].dString}, 200);
       this.paths[2].snap.animate({d: this.paths[2].dString}, 200);
       this.paths[3].snap.animate({opacity: 1}, 200);
@@ -56,6 +56,5 @@ function createPaths(snapInstance) {
         strokeWidth: 0.2
       })
   });
-
   return menuPaths;
 }
