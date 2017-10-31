@@ -1,4 +1,4 @@
-import * as settings from '../settings';
+import * as settings from './settings';
 
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
   const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
@@ -59,10 +59,10 @@ function toPlayShape(paths) {
   const r = settings.viewBox.w / 3;
 
   function getTriangles(n) {
-    const summits = [{x: center.x + r + n, y: center.y}];
+    const summits = [{x: center.x + r + 2*n, y: center.y}];
     summits.push(
-      Object.assign(polarToCartesian(center.x, center.y, r + n, -30)),
-      Object.assign(polarToCartesian(center.x, center.y, r + n, -150))
+      Object.assign(polarToCartesian(center.x, center.y, r + 2*n, -30)),
+      Object.assign(polarToCartesian(center.x, center.y, r + 2*n, -150))
     );
 
     return {d: `
@@ -93,7 +93,7 @@ function spawnPaths(snapInstance) {
       .attr({
         fill: 'transparent',
         stroke: p.stroke,
-        strokeWidth: 0.1
+        strokeWidth: settings.strokeWidth
       });
   });
 
@@ -161,9 +161,7 @@ function getRandomDashArray() {
 function animate(pathsSet, getData) {
   if (!this.playing) return;
   let done = 0 // move to next anim cycle when all anims are completed
-
   const dAttrs = mapMove(pathsSet, getData());
-
   pathsSet
     .forEach((path, i) => {
       path.snap.animate(

@@ -1,12 +1,12 @@
 import Snap from 'snapsvg-cjs';
-import mask from './services/mask';
-import paths from './services/paths';
-import menu from './services/menu';
+import mask from './mask';
+import paths from './paths';
+import menu from './menu';
 import radioOptions from './radio-options';
-import * as getStream from './services/radio';
+import * as getStream from './radio';
 import * as settings from './settings';
 
-import './styles/global.scss';
+import './style.scss';
 
 class App {
   constructor() {

@@ -1,5 +1,5 @@
-import * as settings from '../settings';
-import radioOptions from '../radio-options';
+import * as settings from './settings';
+import radioOptions from './radio-options';
 
 
 export default function(snapInstance, clickCallBack) {
@@ -87,7 +87,7 @@ function createPaths(snapInstance) {
         .attr({
           fill: 'black',
           stroke: 'white',
-          strokeWidth: 0.2
+          strokeWidth: settings.strokeWidth
         })
     }));
 
@@ -104,7 +104,7 @@ function createPaths(snapInstance) {
       .attr({
         fill: 'transparent',
         stroke: 'white',
-        strokeWidth: 0.2
+        strokeWidth: settings.strokeWidth
       })
   };
 
@@ -126,7 +126,7 @@ function createPaths(snapInstance) {
         .attr({
           fill: i ? 'black' : 'white',
           stroke: 'white',
-          strokeWidth: 0.2,
+          strokeWidth: settings.strokeWidth,
           opacity: 0,
           class: option
         })

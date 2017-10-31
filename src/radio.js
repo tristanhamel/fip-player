@@ -1,4 +1,4 @@
-import * as settings from '../settings';
+import * as settings from './settings';
 
 const domain = 'http://localhost:8080';
 const URL = domain + '/api/main';
