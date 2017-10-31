@@ -2,11 +2,11 @@ import * as settings from '../settings';
 import radioOptions from '../radio-options';
 
 
-export default function(snapInstance) {
+export default function(snapInstance, clickCallBack) {
   const obj = Object.assign(createPaths(snapInstance), {
     opened: false,
 
-    open(callback) {
+    open() {
       this.opened = true;
 
       //animate paths bound to bg mask
@@ -24,11 +24,7 @@ export default function(snapInstance) {
           .forEach(o => o.snap.animate({opacity: 1}, 300));
       }, 200);
 
-      if(this.optionsGhosts) {
-        this.optionsGhosts.forEach(o => o.snap.attr({display: 'block'}));
-      } else {
-        this.optionsGhosts = getOptionsGhosts(snapInstance, callback);
-      }
+      this.optionsGhosts.forEach(o => o.snap.attr({display: 'block'}));
     },
 
     close() {
@@ -40,7 +36,6 @@ export default function(snapInstance) {
       this.paths.burger[2].snap.animate({opacity: 1}, 200);
 
       this.optionsGhosts.forEach(o => {
-        console.log(o.snap);
         o.snap.attr({display: 'none'});
       });
 
@@ -50,8 +45,31 @@ export default function(snapInstance) {
       this.paths.texts
         .forEach(o => o.snap.animate({opacity: 0}, 300));
 
-    }
+    },
   });
+
+  // add 'ghost' elements to handle clicks
+  obj.optionsGhosts = obj.paths.options
+    .map((o, i) => ({
+      snap: o.snap.clone()
+        .attr({
+          'display': 'none',
+          fill: 'transparent'
+        })
+        .click(() => {
+          clickCallBack(i);
+          obj.paths.options.forEach((o, j) => {
+            const fill = i === j ? 'white' : 'black';
+            o.snap.animate({fill}, 300);
+          });
+
+          obj.paths.texts.forEach((o, j) => {
+            const fill = i === j ? 'black' : 'white';
+            o.snap.animate({fill}, 300);
+          });
+        })
+        .appendTo(snapInstance)
+    }));
 
   return obj;
 }
@@ -131,41 +149,5 @@ function createPaths(snapInstance) {
         })
     }));
 
-
   return {paths: {burger, frame, options, texts}};
-}
-
-function getOptionsGhosts(snapInstance, callback) {
-  const optionsTop = settings.pathsDistance * 5;
-  const optionsMargin = settings.pathsDistance;
-  const optionsHeight = Math.round(
-    (settings.viewBox.h - optionsTop - optionsMargin*radioOptions.length - settings.pathsDistance) / radioOptions.length
-  );
-
-  // add 'ghost' elements to handle clicks
-  return radioOptions
-    .map((o, i) => ({
-      snap: snapInstance.rect(
-        settings.pathsDistance * 2,
-        optionsTop + i * (optionsMargin + optionsHeight),
-        settings.viewBox.w - 4 * settings.pathsDistance,
-        optionsHeight
-      )
-        .attr({
-          fill: 'transparent'
-        })
-        .click(() => {
-          console.log(i);
-          callback(i);
-          this.paths.options.forEach((o, j) => {
-            const fill = i === j ? 'white' : 'black';
-            o.snap.animate({fill}, 300);
-          });
-
-          this.paths.texts.forEach((o, j) => {
-            const fill = i === j ? 'black' : 'white';
-            o.snap.animate({fill}, 300);
-          });
-        })
-    }));
 }

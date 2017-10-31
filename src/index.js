@@ -18,7 +18,7 @@ class App {
     // svg ui
     this.snapInstance = Snap('#viewBox');
     this.paths = paths(this.snapInstance);
-    this.menu = menu(this.snapInstance);
+    this.menu = menu(this.snapInstance, () => {});
 
     // create mask
     const pathsGroup = this.snapInstance.group(
@@ -81,7 +81,7 @@ class App {
   }
 
   openMenu() {
-    this.menu.open(() => {});
+    this.menu.open();
     this.paths.fadeOut();
   }
 
