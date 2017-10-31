@@ -1,7 +1,7 @@
- .option {
-   fill: black;
+.ghost-option {
+  display: none;
+}
 
-   &:hover {
-     fill: white;
-   }
- }
+.ghost-option.visible {
+  display: block;
+}

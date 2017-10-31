@@ -25,6 +25,7 @@ class App {
       ...this.menu.paths.burger.map(p => p.snap),
       this.menu.paths.frame.snap,
       ...this.menu.paths.options.map(p => p.snap),
+      ...this.menu.paths.texts.map(p => p.snap),
       this.paths.group
     );
     mask(this.snapInstance, pathsGroup);
@@ -80,7 +81,7 @@ class App {
   }
 
   openMenu() {
-    this.menu.open();
+    this.menu.open(() => {});
     this.paths.fadeOut();
   }
 
