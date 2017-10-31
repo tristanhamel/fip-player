@@ -1,7 +1,7 @@
 import * as settings from './settings';
 
-const domain = 'http://localhost:8080';
-const URL = domain + '/api/main';
+const domain = window.location.href;
+const URL = domain + 'api/main';
 
 let analyser, frequencyData, audioElement;
 

@@ -1,26 +1,26 @@
 export default [
   {
     label: 'FIP',
-    url: '/api/main'
+    url: 'api/main'
   },
   {
     label: 'FIP Electro',
-    url: '/api/electro'
+    url: 'api/electro'
   },
   {
     label: 'FIP Rock',
-    url: '/api/rock'
+    url: 'api/rock'
   },
   {
     label: 'FIP Jazz',
-    url: '/api/jazz'
+    url: 'api/jazz'
   },
   {
     label: 'FIP Groove',
-    url: '/api/groove'
+    url: 'api/groove'
   },
   {
     label: 'FIP Reggae',
-    url: '/api/reggae'
+    url: 'api/reggae'
   }
 ];
