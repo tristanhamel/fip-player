@@ -18,6 +18,7 @@ export default function (snapInstance, paths, clickCallback) {
     })
     .click(() => clickCallback());
 
+  snapInstance.prepend(playGhost);
   snapInstance.prepend(rect);
 }
 

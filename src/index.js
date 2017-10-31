@@ -2,6 +2,7 @@ import Snap from 'snapsvg-cjs';
 import mask from './services/mask';
 import paths from './services/paths';
 import menu from './services/menu';
+import radioOptions from './radio-options';
 import * as getStream from './services/radio';
 import * as settings from './settings';
 
@@ -15,7 +16,7 @@ class App {
     // svg ui
     this.snapInstance = Snap('#viewBox');
     this.paths = paths(this.snapInstance);
-    this.menu = menu(this.snapInstance, () => {});
+    this.menu = menu(this.snapInstance, i => this.changeSource(i));
 
     // create mask
     const pathsGroup = this.snapInstance.group(
@@ -93,6 +94,10 @@ class App {
 
   toggleRadio() {
     this.paths.playing ? this.stopPlayback() : this.startPlayback();
+  }
+
+  changeSource(i) {
+    getStream.changeSource(radioOptions[i].url);
   }
 }
 

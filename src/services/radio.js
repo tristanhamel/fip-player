@@ -1,7 +1,7 @@
 import * as settings from '../settings';
 
 const domain = 'http://localhost:8080';
-const URL = domain + '/api';
+const URL = domain + '/api/main';
 
 let analyser, frequencyData, audioElement;
 
@@ -33,6 +33,12 @@ export function getData() {
 export function stop() {
   isPlaying = !isPlaying;
   audioElement.pause();
+}
+
+export function changeSource(source) {
+  audioElement.setAttribute('src', domain + source);
+
+  if(isPlaying) audioElement.play();
 }
 
 function formatData(data) {
