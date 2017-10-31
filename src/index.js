@@ -9,9 +9,6 @@ import './styles/global.scss';
 
 class App {
   constructor() {
-    // temporary  - to be removed
-    document.getElementById('animate-btn').addEventListener('click', () => this.toggleRadio());
-
     // radio stream
     getStream.init(document.querySelector('audio'));
 
@@ -28,7 +25,7 @@ class App {
       ...this.menu.paths.texts.map(p => p.snap),
       this.paths.group
     );
-    mask(this.snapInstance, pathsGroup);
+    mask(this.snapInstance, pathsGroup, () => this.toggleRadio());
 
     // create toggle for the menu
     this.snapInstance.rect(settings.pathsDistance*2, settings.pathsDistance, settings.pathsDistance*3, settings.pathsDistance*3)
