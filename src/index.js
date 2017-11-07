@@ -20,10 +20,10 @@ class App {
 
     // create mask
     const pathsGroup = this.snapInstance.group(
-      ...this.menu.paths.burger.map(p => p.snap),
-      this.menu.paths.frame.snap,
-      ...this.menu.paths.options.map(p => p.snap),
-      ...this.menu.paths.texts.map(p => p.snap),
+      ...this.menu.paths.burger,
+      this.menu.paths.frame,
+      ...this.menu.paths.options,
+      ...this.menu.paths.texts,
       this.paths.group
     );
     mask(this.snapInstance, pathsGroup, () => this.toggleRadio());

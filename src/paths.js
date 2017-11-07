@@ -17,7 +17,7 @@ function describePath(y, n) {
   return {
     y: y + settings.viewBox.h / 2,
     sAnchors: sAnchors(y),
-    dString(anchors = this.sAnchors, y = this.y) {
+    dString(anchors = this.sAnchors) {
       return `M 0 ${this.y} ` +
         anchors.map(p => 'S ' + p.join(' ')) +
         `L ${settings.viewBox.h} ${this.y}`;
@@ -147,20 +147,9 @@ function mapMove(paths, offsets) {
     ]));
 }
 
-function getRandomDashArray() {
-  const length = settings.viewBox.w;
-  const dashLength = 5;
-  const point = Math.round(Math.random() * length);
-
-  return {
-    dashArray : `${length} 5`,
-    dashOffset: `${point}`
-  };
-}
-
 function animate(pathsSet, getData) {
   if (!this.playing) return;
-  let done = 0 // move to next anim cycle when all anims are completed
+  let done = 0; // move to next anim cycle when all anims are completed
   const dAttrs = mapMove(pathsSet, getData());
   pathsSet
     .forEach((path, i) => {
