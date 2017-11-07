@@ -35,6 +35,8 @@ class App {
       })
       .click(() => this.toggleMenu());
 
+    // about button
+    document.getElementById('about-toggle').addEventListener('click', this.toggleAbout);
   }
 
   // toLoadShape() {
@@ -98,6 +100,16 @@ class App {
 
   changeSource(i) {
     getStream.changeSource(radioOptions[i].url);
+  }
+
+  toggleAbout() {
+    document.getElementsByClassName('about')[0]
+      .classList.toggle('hidden');
+
+    Array.from(document.getElementsByClassName('about-toggle-label'))
+      .forEach(el => {
+        el.classList.toggle('hidden');
+      });
   }
 }
 

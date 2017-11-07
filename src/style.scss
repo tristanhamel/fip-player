@@ -1,6 +1,16 @@
+body {
+  font-family: montserrat;
+}
+
+a {
+  color: #57c6e1;
+  text-decoration: none;
+}
+
 #app {
   max-width: 100vh;
   margin: 0 auto;
+  position: relative;
 }
 
 .ghost-option {
@@ -9,4 +19,42 @@
 
 .ghost-option.visible {
   display: block;
+}
+
+.about {
+  position: absolute;
+  background: white;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: x-large;
+  transition: opacity 0.3s linear;
+}
+
+.footer {
+  margin: 1rem;
+  position: relative;
+}
+
+.about-toggle-label {
+  position: absolute;
+  left: 0;
+  padding-bottom: 0.5rem;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.3s,opacity 0.3s linear;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

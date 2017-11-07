@@ -4,13 +4,28 @@
   <title>FIP Radio</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:100" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:200" rel="stylesheet">
 </head>
 <body>
   <div id="app">
+    <div class="about hidden">
+      <p>
+        This app is a just for fun project entirely made with svgs. The source is on <a
+        href="https://github.com/tristanhamel/fip-player" target="_blank">Github</a>.
+        It uses <a href="http://www.fipradio.fr/comment-ecouter-fip"  target="_blank">free apis from FIP</a>, a great radio station from Radio France, the French national broadcast.
+        Because it's deployed on a free server, the application stops to work after some minutes in order to save my traffic credit. If you like what you hear and want to keep listening, please use
+        <a href="http://www.fipradio.fr/player">the official FIP player</a>
+      </p>
+    </div>
     <audio></audio>
     <svg id="viewBox" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
     </svg>
+    <div class="footer">
+      <span id="about-toggle">
+        <a class="about-toggle-label">About</a>
+        <a class="about-toggle-label hidden">Close</a>
+      </span>
+    </div>
   </div>
 </body>
 </html>
