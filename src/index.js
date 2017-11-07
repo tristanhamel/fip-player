@@ -29,7 +29,7 @@ class App {
     mask(this.snapInstance, pathsGroup, () => this.toggleRadio());
 
     // create toggle for the menu
-    this.snapInstance.rect(settings.pathsDistance*2, settings.pathsDistance, settings.pathsDistance*3, settings.pathsDistance*3)
+    this.snapInstance.rect(settings.pathsDistance, settings.pathsDistance, settings.pathsDistance*3, settings.pathsDistance*3)
       .attr({
         fill: 'transparent',
       })
