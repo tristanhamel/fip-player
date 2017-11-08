@@ -10,6 +10,11 @@ import './style.scss';
 
 class App {
   constructor() {
+    // track use time
+    this.timePlayed = 0;
+
+    this.showAbout = false;
+
     // radio stream
     getStream.init(document.querySelector('audio'));
 
@@ -73,11 +78,29 @@ class App {
   startPlayback() {
     getStream.start();
     this.paths.play(getStream.getData);
+    this.checkTimePlayed();
   }
 
   stopPlayback() {
     getStream.stop();
     this.paths.stop();
+  }
+
+  checkTimePlayed() {
+    const timeStamp = Date.now();
+
+    setTimeout(() => {
+      this.timePlayed += Date.now() - timeStamp;
+      if (this.timePlayed > settings.maxPlayTime) {
+        if(this.paths.playing) this.toggleRadio();
+        if(!this.showAbout) this.toggleAbout();
+
+        document.getElementById('about-toggle')
+          .setAttribute('style', 'display: none');
+      } else {
+        this.checkTimePlayed();
+      }
+    }, 5000);
   }
 
   openMenu() {
@@ -103,6 +126,8 @@ class App {
   }
 
   toggleAbout() {
+    this.showAbout = !this.showAbout;
+
     document.getElementsByClassName('about')[0]
       .classList.toggle('hidden');
 
