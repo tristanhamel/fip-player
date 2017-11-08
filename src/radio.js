@@ -43,7 +43,7 @@ export function changeSource(source) {
 
 function formatData(data) {
   const formatted = Array.from(data)
-    .slice(0, 32)
+    .slice(0, settings.anchorsCount)
     .map((n, i) => i % 2 ? -1*n : n)
     .map(n => Math.round((settings.viewBox.h / 3) * n / 255));
 
