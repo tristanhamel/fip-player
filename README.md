@@ -1,4 +1,7 @@
 # fip-player
+
+[Demo here](https://fip-player.herokuapp.com/)
+
 This app is a just for fun project entirely made with svgs. 
 It uses [free apis](http://www.fipradio.fr/comment-ecouter-fip) from FIP, a great radio station from Radio France, the French national broadcast. 
 Because it's deployed on a free server, the application stops to work after some minutes in order to save my traffic credit. 
